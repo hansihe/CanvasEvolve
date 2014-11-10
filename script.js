@@ -32,44 +32,6 @@ window.onload = function() {
         return this.push.apply(this, rest);
     };
 
-    /*function compareCanvas(c1, c2) {
-        var width = 200;
-        var height = 200;
-
-        var c1d = c1.getImageData(0, 0, width, height);
-        var c2d = c2.getImageData(0, 0, width, height);
-
-        var imageSize = width * height;
-        var imageScore = 0;
-
-        var currentRow = 0;
-        var currentCol = 0;
-        var currentIndex = 0;
-
-        var c1c = null;
-        var c2c = null;
-        for (var i = 0; i < imageSize; i++) {
-            currentRow = Math.floor(i / width);
-            currentCol = i % width;
-            currentIndex = i * 4;
-
-            c1c = Array.prototype.slice.call(c1d.data, currentIndex, currentIndex+4);
-            c2c = Array.prototype.slice.call(c2d.data, currentIndex, currentIndex+4);
-
-            c1a = c1c[3] / 255;
-            c2a = c2c[3] / 255;
-
-            var pixelScore = (
-                Math.abs((c1c[0] * c1a) - (c2c[0] * c2a)) +
-                Math.abs((c1c[1] * c1a) - (c2c[1] * c2a)) +
-                Math.abs((c1c[2] * c1a) - (c2c[2] * c2a))
-                ) / 3 / 255;
-            imageScore += pixelScore;
-        }
-
-        return imageScore / imageSize;
-    }*/
-
     function compareCanvas(c1, c2) {
 
         var skip = 1;
@@ -88,16 +50,11 @@ window.onload = function() {
         var currentCol = 0;
         var currentIndex = 0;
 
-        var c1c = null;
-        var c2c = null;
         for (var i = 0; i < imageSize; i++) {
             rI = i * skip;
             currentRow = Math.floor(i / width);
             currentCol = i % width;
             currentIndex = rI * 4;
-
-            //c1c = Array.prototype.slice.call(c1d.data, currentIndex, currentIndex+4);
-            //c2c = Array.prototype.slice.call(c2d.data, currentIndex, currentIndex+4);
 
             c1a = c1d.data[currentIndex + 3] / 255;
             c2a = c2d.data[currentIndex + 3] / 255;
@@ -113,10 +70,7 @@ window.onload = function() {
         return imageScore / imageSize;
     }
 
-    //console.log(compareCanvas(originalCanvas, evolveCanvas));
-
     function drawDesc(canvas, desc) {
-        //canvas.clearRect(0, 0, 200, 200);
         canvas.fillStyle = "rgba(255, 255, 255, 1)";
         canvas.fillRect(0, 0, 200, 200);
 
@@ -193,19 +147,6 @@ window.onload = function() {
     function mutateDesc(desc) {
         var op = -1;
 
-        // Tinker with this, it adjusts how many generations it takes before mutation types get weighted.
-        /*if (mutationStateTracker.totalTries > 100000) {
-            var num = randomIntFromInterval(0, mutationStateTracker.totalTries);
-            for (var i = 0; i < mutationTypes.length; i++) {
-                var type = mutationTypes[i];
-                if ((num -= mutationStateTracker.mutationSuccess[type]) <= 0) {
-                    op = type;
-                    break;
-                }
-            }
-        } else {
-            op = randomIntFromInterval(0, mutationTypes.length-1);
-        }*/
         var num = randomIntFromInterval(0, mutationWeightSum-1);
         for (var i = 0; i < mutationTypes.length; i++) {
             if ((num -= mutationWeights[mutationTypes[i]]) < 0) {
@@ -251,47 +192,7 @@ window.onload = function() {
         return op;
     }
 
-    /*function mutateDesc(desc) {
-        var op = randomIntFromInterval(0, 7);
-
-        if (op <= 3) { // Move point
-            var drawElement = desc[randomIntFromInterval(0, desc.length-1)];
-            var coordElement = drawElement[randomIntFromInterval(1, 3)];
-            //var axisId = randomIntFromInterval(0, 1);
-
-            //coordElement[axisId] = coordElement[axisId] + randomIntFromInterval(-20, 20);
-            coordElement[0] = coordElement[0] + randomIntFromInterval(-10, 10);
-            coordElement[1] = coordElement[1] + randomIntFromInterval(-10, 10);
-        } else if (op == 4) { // Add poly
-            if (desc.length >= 800) {
-                mutateDesc(desc);
-                return;
-            }
-            desc.push([[r(255), r(255), r(255), Math.random()], [r(200), r(200)], [r(200), r(200)], [r(200), r(200)]]);
-        } else if (op == 5) { // Mutate color
-            var drawElement = desc[randomIntFromInterval(0, desc.length-1)];
-            var colorElement = randomIntFromInterval(0, 2);
-
-            drawElement[0][colorElement] = (drawElement[0][colorElement] + randomIntFromInterval(-40, 40)).clamp(0, 255);
-        } else if (op == 6) { // Remove element
-            var targetElement = randomIntFromInterval(0, desc.length-1);
-            desc.remove(targetElement);
-        } else if (op == 7) { // Mutate alpha
-            var elementId = randomIntFromInterval(0, desc.length-1);
-            var drawElement = desc[randomIntFromInterval(0, desc.length-1)];
-
-            drawElement[0][3] = (drawElement[0][3] + (Math.random() - 0.5)).clamp(0, 1);
-            // If the alpha is zero, we might as well remove the element.
-            if (drawElement[0][3] == 0) {
-                desc.remove(elementId);
-            }
-        }
-
-        return op;
-    }*/
-
     Math.seedrandom("test2");
-    console.log("====");
 
     evolveCanvas.fillStyle = 'rgba(100, 100, 100, 0.6)';
 
