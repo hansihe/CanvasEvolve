@@ -1,10 +1,16 @@
 window.onload = function() {
 
-    var originalCanvas = document.getElementById('o').getContext('2d');
-    var evolveCanvas = document.getElementById('c').getContext('2d');
+    var bestCanvas = document.getElementById('b');
+    var bestCanvasCtx = bestCanvas.getContext('2d');
+
+    var originalCanvas = document.getElementById('o');
+    var originalCanvasCtx = originalCanvas.getContext('2d');
+
+    var evolveCanvas = document.getElementById('c');
+    var evolveCanvasCtx = evolveCanvas.getContext('2d');
 
     var originalImage = document.getElementById('i1');
-    originalCanvas.drawImage(originalImage, 0, 0, 200, 200);
+    originalCanvasCtx.drawImage(originalImage, 0, 0, 200, 200);
 
     var genCounter = document.getElementById('gen-counter');
     var generation = 0;
@@ -134,6 +140,7 @@ window.onload = function() {
             }
         }
     };
+    stateMutationTracker = mutationStateTracker;
 
     var mutationWeights = {};
     mutationWeights[MUTATE_MOVE_VERTEX] = 4;
@@ -194,25 +201,29 @@ window.onload = function() {
 
     Math.seedrandom("test2");
 
-    evolveCanvas.fillStyle = 'rgba(100, 100, 100, 0.6)';
+    evolveCanvasCtx.fillStyle = 'rgba(100, 100, 100, 0.6)';
 
     var desc = [
         [[r(255), r(255), r(255), Math.random()], [r(200), r(200)], [r(200), r(200)], [r(200), r(200)]]
     ];
-    drawDesc(evolveCanvas, desc);
-    var currDiff = compareCanvas(originalCanvas, evolveCanvas);
+    stateDesc = desc;
+
+    drawDesc(evolveCanvasCtx, desc);
+    var currDiff = compareCanvas(originalCanvasCtx, evolveCanvasCtx);
 
     function iterate() {
         increaseGeneration();
 
         var newDesc = copyArrayStruct(desc);
         var mutationType = mutateDesc(newDesc);
-        drawDesc(evolveCanvas, newDesc);
+        drawDesc(evolveCanvasCtx, newDesc);
 
-        var newDiff = compareCanvas(originalCanvas, evolveCanvas);
+        var newDiff = compareCanvas(originalCanvasCtx, evolveCanvasCtx);
         if (newDiff < currDiff) {
             currDiff = newDiff;
             desc = newDesc;
+
+            bestCanvasCtx.drawImage(evolveCanvas, 0, 0);
 
             mutationStateTracker.reportMutation(mutationType, true);
         } else {
