@@ -116,7 +116,9 @@ window.onload = function() {
     //console.log(compareCanvas(originalCanvas, evolveCanvas));
 
     function drawDesc(canvas, desc) {
-        canvas.clearRect(0, 0, 200, 200);
+        //canvas.clearRect(0, 0, 200, 200);
+        canvas.fillStyle = "rgba(255, 255, 255, 1)";
+        canvas.fillRect(0, 0, 200, 200);
 
         for (var descIndex = 0; descIndex < desc.length; descIndex++) {
             var element = desc[descIndex];
